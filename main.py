@@ -1,9 +1,9 @@
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from weather import get_weather
-from guide import get_guide_list
+#from guide import get_guide_list
 
-TOKEN = '6205054787:AAHgrwc8dXDm86Rbffz4NHnwHuABCLRy3jQ'
+TOKEN = open("TOKEN.txt").read().split()[0]
 
 
 # обработчик команды /start

@@ -2,7 +2,8 @@ import requests
 
 # Задаем URL и API-KEY OpenWeatherMap
 URL = 'http://api.openweathermap.org/data/2.5/weather'
-API_KEY = '8815a5ee6da1b538cd89f8e541b1e0f9'
+API_KEY = open("TOKEN.txt").read().split()[1]
+print(API_KEY)
 
 
 # Получаем погоду в виде текста
