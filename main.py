@@ -27,6 +27,7 @@ async def help(update, context) -> None:
     await update.message.reply_text(f'Мои команды:\n'
                                     f'***/weather [город]*** - получить прогноз погоды для заданного города;\n'
                                     f'***/guide [место]*** - получить список интересных мест для заданного места\n'
+                                    f'***/tip*** - получить случайный совет для путешествия'
                                     , parse_mode="Markdown")
 
 
@@ -69,7 +70,7 @@ async def guide(update, context) -> None:
                                         parse_mode="Markdown")
         return
 
-    await update.message.reply_text('***Ожидайте!***', parse_mode="Markdown")
+    await update.message.reply_text('***Ищу интересные места!***', parse_mode="Markdown")
     guide_data = await get_guide_list(place)
     if isinstance(guide_data, str):
         await update.message.reply_text(guide_data, parse_mode="Markdown")
