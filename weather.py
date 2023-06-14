@@ -25,7 +25,7 @@ async def get_weather(city: str) -> str:
         wind = data['wind']['speed']
         # прогноз на ближайшие дни
         forecast = data['weather'][0]['description']
-        return (f'**ПОГОДА В {city.upper()}***\n'
+        return (f'***ПОГОДА В {city.upper()}***\n'
                 f'Температура: ***{temp}°C***\n'
                 f'Ощущается как: ***{temp_fell}°C***\n'
                 f'Влажность: ***{humidity}%***\n'

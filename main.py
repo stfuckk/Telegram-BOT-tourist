@@ -2,16 +2,20 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from weather import get_weather
 from guide import get_guide_list
+from travel_tips import get_travel_tip
+import random
 
 TOKEN = open("TOKEN.txt").read().split()[0]
+
+keyboard = ReplyKeyboardMarkup([
+    [KeyboardButton('/help')],
+    [KeyboardButton('/about')],
+    [KeyboardButton('/tip')]
+], resize_keyboard=True)
 
 
 # обработчик команды /start
 async def start(update, context) -> None:
-    keyboard = ReplyKeyboardMarkup([
-        [KeyboardButton('/help')],
-        [KeyboardButton('/about')]
-    ], resize_keyboard=True)
     await update.message.reply_text(
         f'***Привет! Я диня - бот, который предоставит полезную информацию для твоего путешествия!***\n'
         f'Напиши /help, чтобы узнать мои команды, так же, ты можешь воспользоваться клавиатурой.',
@@ -23,7 +27,7 @@ async def help(update, context) -> None:
     await update.message.reply_text(f'Мои команды:\n'
                                     f'***/weather [город]*** - получить прогноз погоды для заданного города;\n'
                                     f'***/guide [место]*** - получить список интересных мест для заданного места\n'
-                                    f'(напишите ***город и страну*** для точного поиска)\n', parse_mode="Markdown")
+                                    , parse_mode="Markdown")
 
 
 # обработчик команды /about
@@ -44,7 +48,7 @@ async def echo(update, context) -> None:
 
 # обработчики основных команд
 # weather
-async def weather(update, context) -> None:
+async def weather(update, context):
     try:
         city = update.message.text.split()[1]
     except IndexError:
@@ -70,8 +74,19 @@ async def guide(update, context) -> None:
     if isinstance(guide_data, str):
         await update.message.reply_text(guide_data, parse_mode="Markdown")
     else:
+        random.shuffle(guide_data)
+        k = 0
         for showplace in guide_data:
-            await update.message.reply_photo(photo=showplace[0], caption=showplace[1], parse_mode="Markdown")
+            k += 1
+            await update.message.reply_text(showplace, parse_mode="Markdown", disable_web_page_preview=True)
+            if k == 5:
+                return
+
+
+# tip
+async def tip(update, context) -> None:
+    random_tip = await get_travel_tip()
+    await update.message.reply_text(random_tip, parse_mode="Markdown")
 
 
 def main():
@@ -86,6 +101,9 @@ def main():
 
     # /guide
     application.add_handler(CommandHandler('guide', guide))
+
+    # /tip
+    application.add_handler(CommandHandler('tip', tip))
 
     application.add_handler(MessageHandler(filters.TEXT, echo))
     application.run_polling(print('Бот готов к работе!'))
