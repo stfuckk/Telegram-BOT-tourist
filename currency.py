@@ -4,28 +4,31 @@ API_KEY_OW = open("TOKEN.txt").read().split()[1]
 API_KEY = open("TOKEN.txt").read().split()[4]
 
 
-def exchange_currency(amount, city) -> str:
-    url = f"https://openexchangerates.org/api/latest.json?app_id={API_KEY}"
-    response = requests.get(url)
-    data = response.json()
+async def exchange_currency(amount, country):
+    country = country.upper()
+    # Получаем код валюты по стране
+    try:
+        response = requests.get(f"https://restcountries.com/v3/name/{country}")
+        currency_code = response.json()[0]["currencies"]
+        currency_code = list(currency_code.keys())[0]
+    except:
+        return f'Не могу найти такую страну в списке, проверьте правильность написания!'
 
-    # Определение кода валюты по городу
-    currency_code = None
-    for cur_code, cur_info in data['rates'].items():
-        if not isinstance(cur_info, dict):
-            continue
-        if cur_info['name'].lower() == city.lower():
-            currency_code = cur_code
-            break
+    # Получаем курс валюты
+    response = requests.get("https://openexchangerates.org/api/latest.json", params={
+        "app_id": API_KEY,
+        "symbols": "RUB," + currency_code
+    })
+    exchange_rate = response.json()["rates"]["RUB"]
+    # Обмениваем валюту
 
-    if currency_code is None:
-        return f"К сожалению, мы не можем обменять валюту в городе {city}"
+    # здесь мы переводим рубли в доллары
+    result = amount / exchange_rate
 
-    # Расчет суммы обмена
-    exchange_rate = data['rates'][currency_code]['rate']
-    result = round(amount / exchange_rate, 2)
+    exchange_rate = response.json()["rates"][currency_code]
 
-    return f"Вы меняете {amount} RUB ===> {result} {currency_code} in {city}"
+    # здесь мы переводим доллары в нужную валюту
+    result = round(result * exchange_rate, 2)
 
+    return f'Вы меняете {amount} RUB ===> {result} {currency_code} in {country}'
 
-print(exchange_currency(1000, 'London'))

@@ -3,6 +3,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from weather import get_weather
 from guide import get_guide_list
 from travel_tips import get_travel_tip
+from currency import exchange_currency
 import random
 
 TOKEN = open("TOKEN.txt").read().split()[0]
@@ -27,7 +28,9 @@ async def help(update, context) -> None:
     await update.message.reply_text(f'Мои команды:\n'
                                     f'***/weather [город]*** - получить прогноз погоды для заданного города;\n'
                                     f'***/guide [место]*** - получить список интересных мест для заданного места\n'
-                                    f'***/tip*** - получить случайный совет для путешествия'
+                                    f'***/tip*** - получить случайный совет для путешествия\n'
+                                    f'***/currency [кол-во рублей] [страна(eng only)]*** '
+                                    f'- обменять рубли на валюту заданной страны'
                                     , parse_mode="Markdown")
 
 
@@ -90,6 +93,21 @@ async def tip(update, context) -> None:
     await update.message.reply_text(random_tip, parse_mode="Markdown")
 
 
+# currency
+async def currency(update, context):
+    try:
+        rub_count = float(update.message.text.split()[1])
+        country = update.message.text.split()[2]
+    except:
+        await update.message.reply_text(
+            'Напишите команду в виде "***/currency [кол-во рублей] [страна(eng only)]***", пожалуйста.',
+            parse_mode="Markdown")
+        return
+
+    result = await exchange_currency(rub_count, country)
+    await update.message.reply_text(result, parse_mode="Markdown")
+
+
 def main():
     application = Application.builder().token(TOKEN).build()
 
@@ -105,6 +123,9 @@ def main():
 
     # /tip
     application.add_handler(CommandHandler('tip', tip))
+
+    # /currency
+    application.add_handler(CommandHandler('currency', currency))
 
     application.add_handler(MessageHandler(filters.TEXT, echo))
     application.run_polling(print('Бот готов к работе!'))
