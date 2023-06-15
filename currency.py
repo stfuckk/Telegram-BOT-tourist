@@ -30,5 +30,5 @@ async def exchange_currency(amount, country):
     # здесь мы переводим доллары в нужную валюту
     result = round(result * exchange_rate, 2)
 
-    return f'Вы меняете {amount} RUB ===> {result} {currency_code} in {country}'
+    return f'Вы меняете {amount} RUB ===> {result} {currency_code} в {country}'
 
