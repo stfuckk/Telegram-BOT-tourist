@@ -66,7 +66,6 @@ async def weather(update, context):
 # guide
 async def guide(update, context) -> None:
     try:
-        place = update.message.text.split()[1]
         place = ' '.join(update.message.text.split()[1:])
     except IndexError:
         await update.message.reply_text('Напишите команду в виде "***/guide [место]***", пожалуйста.',
@@ -97,7 +96,7 @@ async def tip(update, context) -> None:
 async def currency(update, context):
     try:
         rub_count = float(update.message.text.split()[1])
-        country = update.message.text.split()[2]
+        country = ' '.join(update.message.text.split()[2:])
     except:
         await update.message.reply_text(
             'Напишите команду в виде "***/currency [кол-во рублей] [страна(eng only)]***", пожалуйста.',
