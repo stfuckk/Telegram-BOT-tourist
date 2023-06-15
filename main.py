@@ -89,13 +89,19 @@ async def guide(update, context) -> None:
         random.shuffle(guide_data)
         k = 0
         result = ''
-        for showplace in guide_data:
-            k += 1
-            result += showplace + '\n\n'
-            await update.message.reply_text(showplace, parse_mode="Markdown", disable_web_page_preview=True)
-            if k == 5:
+        if len(guide_data) > 5:
+            for showplace in guide_data:
+                k += 1
+                result += showplace + '\n\n'
+                await update.message.reply_text(showplace, parse_mode="Markdown", disable_web_page_preview=True)
+                if k == 5:
+                    log(update, context, result)
+                    return
+        else:
+            for showplace in guide_data:
+                result += showplace + '\n\n'
+                await update.message.reply_text(showplace, parse_mode="Markdown", disable_web_page_preview=True)
                 log(update, context, result)
-                return
 
 
 # tip
